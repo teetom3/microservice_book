@@ -5,11 +5,11 @@ const config = {
   name: 'LbMicroBook',
   connector: 'mongodb',
   url: '',
-  host: '127.0.0.1',
-  port: 27017,
+  host: process.env.MONGODB_HOST ?? '127.0.0.1',
+  port: +(process.env.MONGODB_PORT ?? 27017),
   user: '',
   password: '',
-  database: 'LbMicroBook',
+  database: process.env.MONGODB_DATABASE ?? 'LbMicroBook',
   useNewUrlParser: true
 };
 

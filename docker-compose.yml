@@ -1,0 +1,36 @@
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    volumes:
+      - mongo_data:/data/db
+
+  back:
+    build: ./loopback-bookstore_2
+    container_name: back
+    environment:
+      HOST: 0.0.0.0
+      MONGODB_HOST: mongo
+      MONGODB_PORT: 27017
+      MONGODB_DATABASE: LbMicroBook
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongo
+
+  front:
+    build: ./bookstore-web-app
+    container_name: front
+    environment:
+      API_URL: http://back:3000
+    ports:
+      - "4000:4000"
+    depends_on:
+      - back
+
+networks:
+  default:
+    name: bookstore-net
+
+volumes:
+  mongo_data:
