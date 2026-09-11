@@ -7,6 +7,20 @@ services:
     volumes:
       - mongo_data:/data/db
 
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: bookstore
+      RABBITMQ_DEFAULT_PASS: bookstore
+    ports:
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
   back:
     build: ./loopback-bookstore_2
     container_name: back
@@ -29,7 +43,52 @@ services:
       - "4000:4000"
     depends_on:
       - back
+  orders:
+    build: ./orders-service
+    container_name: orders
+    environment:
+      HOST: 0.0.0.0
+      PORT: 3001
+      MONGODB_HOST: mongo
+      MONGODB_PORT: 27017
+      MONGODB_DATABASE: LbMicroOrder
+      BOOKS_API: http://back:3000
+      RABBITMQ_URL: amqp://bookstore:bookstore@rabbitmq
+    depends_on:
+      mongo:
+        condition: service_started
+      back:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
 
+  payments:
+    build: ./payments-service
+    container_name: payments
+    environment:
+      HOST: 0.0.0.0
+      PORT: 3002
+      MONGODB_HOST: mongo
+      MONGODB_PORT: 27017
+      MONGODB_DATABASE: LbMicroPayment
+      ORDERS_API: http://orders:3001
+      RABBITMQ_URL: amqp://bookstore:bookstore@rabbitmq
+    depends_on:
+      mongo:
+        condition: service_started
+      orders:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+
+  gateway:
+    build: ./gateway
+    container_name: bookstore-gateway
+    ports:
+      - "8082:8080"
+    depends_on:
+      - front
+      - back
 networks:
   default:
     name: bookstore-net

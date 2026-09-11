@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "fast-gateway": "^5.0.1"
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "name": "orders-service",
+  "version": "0.0.1",
+  "description": "orders-service",
+  "keywords": [
+    "loopback-application",
+    "loopback"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "engines": {
+    "node": "20 || 22 || 24"
+  },
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "clean": "rimraf dist *.tsbuildinfo .eslintcache",
+    "pretest": "npm run rebuild",
+    "openapi-spec": "node ./dist/openapi-spec",
+    "prestart": "npm run rebuild",
+    "start": "node -r source-map-support/register .",
+    "prepare": "npm run build",
+    "rebuild": "npm run clean && npm run build"
+  },
+  "repository": {
+    "type": "git"
+  },
+  "author": "thomas <thomas.zeryouh@goons.fr>",
+  "license": "",
+  "files": [
+    "README.md",
+    "dist",
+    "src",
+    "!*/__tests__"
+  ],
+  "dependencies": {
+    "@loopback/boot": "^8.0.16",
+    "@loopback/core": "^7.0.15",
+    "@loopback/repository": "^8.0.15",
+    "@loopback/rest": "^15.0.16",
+    "@loopback/rest-explorer": "^8.0.16",
+    "amqplib": "^2.0.1",
+    "loopback-connector-mongodb": "^6.3.1",
+    "tslib": "^2.0.0"
+  },
+  "devDependencies": {
+    "@loopback/testlab": "^8.0.15",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^20.19.43",
+    "rimraf": "^5.0.10",
+    "source-map-support": "^0.5.21",
+    "typescript": "~5.2.2"
+  }
+}
