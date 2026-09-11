@@ -20,8 +20,7 @@ import {
 } from "@loopback/rest";
 import { Payment } from "../models";
 import { PaymentRepository } from "../repositories";
-import { publierPaiement } from "../rabbit";
-
+import {publierPaiement} from "../rabbit";
 const ORDERS_API = process.env.ORDERS_API || "http://localhost:3001";
 export class PaymentController {
   constructor(
@@ -53,9 +52,9 @@ export class PaymentController {
         `Order with id ${payment.orderId} does not exist`,
       );
     }
-    const cree = await this.paymentRepository.create(payment);
-    publierPaiement({orderId: cree.orderId, amount: cree.amount});
-    return cree;
+    const createdPayment = await this.paymentRepository.create(payment);
+    publierPaiement(createdPayment);
+    return createdPayment;
   }
 
   @get("/payments/count")
